@@ -1,7 +1,14 @@
 # CampusEats
-
 CampusEats is a campus food-ordering system where students can browse restaurants, view menus, order food, make payments, and track deliveries.
 
+## Project Members
+
+| ID | Name |
+|---|---|
+| 20251651034 | Dave Dev Rupeshkumar |
+| 20251651053 | Kuldeep Rout |
+| 20251651102 | Vikash Kumar |
+| 20251651029 | Arjun Bodana |
 ## Repository Structure
 
 ```text
