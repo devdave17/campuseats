@@ -1,12 +1,6 @@
 CampusEats Assignment 5
-curl -v Transcript
-====================
-
-Project Directory:
-C:\Users\jdhda\Documents\MCA Study Material\CampusEats
 
 
- 
 1. CREATE MENU ITEM - 201 CREATED
  
 
@@ -129,51 +123,149 @@ PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats> curl.exe -v "http://l
 PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats>
 
 
- 
-5. CONDITIONAL UPDATE - IF-MATCH
- 
-
-PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats> curl.exe -v "http://localhost:8080/menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a/availability" -H "Content-Type: application/json" -H "If-Match: \"1\"" --data "{\"available\":false}"
-
-PASTE THE ACTUAL TERMINAL OUTPUT HERE.
 
 
- 
-6. BAD REQUEST - 400
- 
+
+
+5. CONDITIONAL UPDATE - 412 PRECONDITION FAILED
+
+
+PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats> curl.exe -v "http://localhost:8080/menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a/availability" -H "Content-Type: application/json" -H "If-Match: \"0\"" --data "{\"available\":false}"
+
+* Host localhost:8080 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+*   Trying [::1]:8080...
+* Established connection to localhost (::1 port 58842)
+* using HTTP/1.x
+> POST /menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a/availability HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/8.21.0
+> Accept: */*
+> Content-Type: application/json
+> If-Match: "0"
+> Content-Length: 18
+>
+* Request completely sent off
+< HTTP/1.1 412
+< Content-Type: application/json
+< Transfer-Encoding: chunked
+<
+{"status":412,"error":"Precondition Failed","message":"ETag does not match"}
+* Connection #0 to host localhost:8080 left intact
+
+PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats>
+
+
+
+6. MALFORMED JSON - 400 BAD REQUEST
+
 
 PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats> curl.exe -v "http://localhost:8080/menu-items" -H "Content-Type: application/json" -H "Idempotency-Key: d1-bad-001" --data "{\"name\":"
 
-PASTE THE ACTUAL TERMINAL OUTPUT HERE.
+* Host localhost:8080 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+*   Trying [::1]:8080...
+* Established connection to localhost (::1 port 58842)
+* using HTTP/1.x
+> POST /menu-items HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/8.21.0
+> Accept: */*
+> Content-Type: application/json
+> Idempotency-Key: d1-bad-001
+> Content-Length: 8
+>
+* Request completely sent off
+< HTTP/1.1 400
+< Content-Type: application/json
+< Transfer-Encoding: chunked
+<
+{"status":400,"error":"Bad Request","message":"Malformed JSON request"}
+* Connection #0 to host localhost:8080 left intact
+
+PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats>
 
 
- 
-7. NOT FOUND - 404
- 
+
+7. MENU ITEM NOT FOUND - 404 NOT FOUND
+
 
 PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats> curl.exe -v "http://localhost:8080/menu-items/00000000-0000-0000-0000-000000000000"
 
-PASTE THE ACTUAL TERMINAL OUTPUT HERE.
+* Host localhost:8080 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+*   Trying [::1]:8080...
+* Established connection to localhost (::1 port 58842)
+* using HTTP/1.x
+> GET /menu-items/00000000-0000-0000-0000-000000000000 HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/8.21.0
+> Accept: */*
+>
+* Request completely sent off
+< HTTP/1.1 404
+< Content-Type: application/json
+< Transfer-Encoding: chunked
+<
+{"status":404,"error":"Not Found","message":"Menu item not found"}
+* Connection #0 to host localhost:8080 left intact
+
+PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats>
 
 
- 
-8. UNAUTHORIZED - 401
- 
+
+8. MISSING AUTHORIZATION - 401 UNAUTHORIZED
+
 
 PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats> curl.exe -v "http://localhost:8080/menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a"
 
-PASTE THE ACTUAL TERMINAL OUTPUT HERE.
+* Host localhost:8080 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+*   Trying [::1]:8080...
+* Established connection to localhost (::1 port 58842)
+* using HTTP/1.x
+> GET /menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/8.21.0
+> Accept: */*
+>
+* Request completely sent off
+< HTTP/1.1 401
+< Content-Type: application/json
+< Transfer-Encoding: chunked
+<
+{"status":401,"error":"Unauthorized","message":"Authorization header is required"}
+* Connection #0 to host localhost:8080 left intact
+
+PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats>
 
 
- 
 9. CONDITIONAL GET - 304 NOT MODIFIED
- 
+
 
 PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats> curl.exe -v "http://localhost:8080/menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a" -H "If-None-Match: \"1\""
 
-PASTE THE ACTUAL TERMINAL OUTPUT HERE.
+* Host localhost:8080 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+*   Trying [::1]:8080...
+* Established connection to localhost (::1 port 58842)
+* using HTTP/1.x
+> GET /menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/8.21.0
+> Accept: */*
+> If-None-Match: "1"
+>
+* Request completely sent off
+< HTTP/1.1 304
+< ETag: "1"
+< Date: Tue, 22 Sep 2026 17:55:12 GMT
+<
+* Connection #0 to host localhost:8080 left intact
 
-
- 
-END OF TRANSCRIPT
- 
+PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats>
