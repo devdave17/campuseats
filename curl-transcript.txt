@@ -1,9 +1,23 @@
-1. Create Menu Item
+CampusEats Assignment 5
+curl -v Transcript
+====================
 
-Command:
+Project Directory:
+C:\Users\jdhda\Documents\MCA Study Material\CampusEats
 
-curl.exe -v "http://localhost:8080/menu-items" -H "Content-Type: application/json" -H "Idempotency-Key: d1-create-001" --data-binary "@d1-body.json"
 
+ 
+1. CREATE MENU ITEM - 201 CREATED
+ 
+
+PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats> curl.exe -v "http://localhost:8080/menu-items" -H "Content-Type: application/json" -H "Idempotency-Key: d1-create-001" --data-binary "@d1-body.json"
+
+* Host localhost:8080 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+*   Trying [::1]:8080...
+* Established connection to localhost (::1 port 8080) from ::1 port 58842
+* using HTTP/1.x
 > POST /menu-items HTTP/1.1
 > Host: localhost:8080
 > User-Agent: curl/8.21.0
@@ -11,23 +25,32 @@ curl.exe -v "http://localhost:8080/menu-items" -H "Content-Type: application/jso
 > Content-Type: application/json
 > Idempotency-Key: d1-create-001
 > Content-Length: 84
-
+>
+* Request completely sent off
 < HTTP/1.1 201
 < Location: /menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a
 < Content-Type: application/json
 < Transfer-Encoding: chunked
-
+< Date: Tue, 22 Sep 2026 17:45:51 GMT
+<
 {"available":true,"category":"Test","description":"D1 curl test","id":"2bbdf2d6-f9b1-4115-9868-cc97fc409e2a","name":"D1 Test Burger","price":160.0,"version":1}
+* Connection #0 to host localhost:8080 left intact
+
+PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats>
 
 
  
-2. Idempotent Repeat
+2. REPEATED CREATE WITH SAME IDEMPOTENCY-KEY
  
 
-Command:
+PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats> curl.exe -v "http://localhost:8080/menu-items" -H "Content-Type: application/json" -H "Idempotency-Key: d1-create-001" --data-binary "@d1-body.json"
 
-curl.exe -v "http://localhost:8080/menu-items" -H "Content-Type: application/json" -H "Idempotency-Key: d1-create-001" --data-binary "@d1-body.json"
-
+* Host localhost:8080 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+*   Trying [::1]:8080...
+* Established connection to localhost (::1 port 58842)
+* using HTTP/1.x
 > POST /menu-items HTTP/1.1
 > Host: localhost:8080
 > User-Agent: curl/8.21.0
@@ -35,120 +58,122 @@ curl.exe -v "http://localhost:8080/menu-items" -H "Content-Type: application/jso
 > Content-Type: application/json
 > Idempotency-Key: d1-create-001
 > Content-Length: 84
-
+>
+* Request completely sent off
 < HTTP/1.1 201
 < Location: /menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a
 < Content-Type: application/json
-
+<
 {"available":true,"category":"Test","description":"D1 curl test","id":"2bbdf2d6-f9b1-4115-9868-cc97fc409e2a","name":"D1 Test Burger","price":160.0,"version":1}
+* Connection #0 to host localhost:8080 left intact
+
+PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats>
 
 
  
-3. Get Menu Item
+3. GET MENU ITEM - 200 OK WITH ETAG
  
 
-Command:
+PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats> curl.exe -v "http://localhost:8080/menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a"
 
-curl.exe -v "http://localhost:8080/menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a"
-
+* Host localhost:8080 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+*   Trying [::1]:8080...
+* Established connection to localhost (::1 port 58842)
+* using HTTP/1.x
 > GET /menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a HTTP/1.1
 > Host: localhost:8080
 > User-Agent: curl/8.21.0
 > Accept: */*
-
+>
+* Request completely sent off
 < HTTP/1.1 200
 < ETag: "1"
 < Content-Type: application/json
 < Transfer-Encoding: chunked
-
+<
 {"available":true,"category":"Test","description":"D1 curl test","id":"2bbdf2d6-f9b1-4115-9868-cc97fc409e2a","name":"D1 Test Burger","price":160.0,"version":1}
+* Connection #0 to host localhost:8080 left intact
+
+PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats>
 
 
  
-4. Conditional GET
+4. CONDITIONAL GET - IF-NONE-MATCH
  
 
-Command:
+PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats> curl.exe -v "http://localhost:8080/menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a" --header 'If-None-Match: "1"'
 
-curl.exe -v "http://localhost:8080/menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a" -H "If-None-Match: \"1\""
-
+* Host localhost:8080 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+*   Trying [::1]:8080...
+* Established connection to localhost (::1 port 58842)
+* using HTTP/1.x
 > GET /menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a HTTP/1.1
 > Host: localhost:8080
 > User-Agent: curl/8.21.0
 > Accept: */*
-> If-None-Match: "1"
-
-< HTTP/1.1 304
+> If-None-Match: 1
+>
+* Request completely sent off
+< HTTP/1.1 200
 < ETag: "1"
-
-
- 
-5. Conditional Write
- 
-
-Command:
-
-curl.exe -v "http://localhost:8080/menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a/availability" -H "Content-Type: application/json" -H "If-Match: \"0\"" --data-binary "@availability-body.json"
-
-> POST /menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a/availability HTTP/1.1
-> Host: localhost:8080
-> User-Agent: curl/8.21.0
-> Accept: */*
-> Content-Type: application/json
-> If-Match: "0"
-
-< HTTP/1.1 412
 < Content-Type: application/json
+< Transfer-Encoding: chunked
+< Date: Tue, 22 Sep 2026 17:51:48 GMT
+<
+{"available":true,"category":"Test","description":"D1 curl test","id":"2bbdf2d6-f9b1-4115-9868-cc97fc409e2a","name":"D1 Test Burger","price":160.0,"version":1}* Connection #0 to host localhost:8080 left intact
+
+PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats>
 
 
  
-6. Malformed JSON
+5. CONDITIONAL UPDATE - IF-MATCH
  
 
-Command:
+PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats> curl.exe -v "http://localhost:8080/menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a/availability" -H "Content-Type: application/json" -H "If-Match: \"1\"" --data "{\"available\":false}"
 
-curl.exe -v "http://localhost:8080/menu-items" -H "Content-Type: application/json" -H "Idempotency-Key: d1-bad-001" --data-binary "@bad-body.json"
-
-> POST /menu-items HTTP/1.1
-> Host: localhost:8080
-> User-Agent: curl/8.21.0
-> Accept: */*
-> Content-Type: application/json
-> Idempotency-Key: d1-bad-001
-
-< HTTP/1.1 400
-< Content-Type: application/json
+PASTE THE ACTUAL TERMINAL OUTPUT HERE.
 
 
  
-7. Missing Resource
+6. BAD REQUEST - 400
  
 
-Command:
+PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats> curl.exe -v "http://localhost:8080/menu-items" -H "Content-Type: application/json" -H "Idempotency-Key: d1-bad-001" --data "{\"name\":"
 
-curl.exe -v "http://localhost:8080/menu-items/00000000-0000-0000-0000-000000000000"
-
-> GET /menu-items/00000000-0000-0000-0000-000000000000 HTTP/1.1
-> Host: localhost:8080
-> User-Agent: curl/8.21.0
-> Accept: */*
-
-< HTTP/1.1 404
-< Content-Type: application/json
+PASTE THE ACTUAL TERMINAL OUTPUT HERE.
 
 
  
-8. Unauthorized Request
+7. NOT FOUND - 404
  
 
-Command:
+PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats> curl.exe -v "http://localhost:8080/menu-items/00000000-0000-0000-0000-000000000000"
 
-curl.exe -v "http://localhost:8080/menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a"
+PASTE THE ACTUAL TERMINAL OUTPUT HERE.
 
-> GET /menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a HTTP/1.1
-> Host: localhost:8080
-> User-Agent: curl/8.21.0
-> Accept: */*
 
-< HTTP/1.1 401
-< Content-Type: application/json
+ 
+8. UNAUTHORIZED - 401
+ 
+
+PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats> curl.exe -v "http://localhost:8080/menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a"
+
+PASTE THE ACTUAL TERMINAL OUTPUT HERE.
+
+
+ 
+9. CONDITIONAL GET - 304 NOT MODIFIED
+ 
+
+PS C:\Users\jdhda\Documents\MCA Study Material\CampusEats> curl.exe -v "http://localhost:8080/menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a" -H "If-None-Match: \"1\""
+
+PASTE THE ACTUAL TERMINAL OUTPUT HERE.
+
+
+ 
+END OF TRANSCRIPT
+ 
