@@ -3,7 +3,6 @@ package com.campuseats.iiitv.service;
 import com.campuseats.iiitv.dto.AvailabilityRequest;
 import com.campuseats.iiitv.dto.CreateMenuItemRequest;
 import com.campuseats.iiitv.dto.MenuItemResponse;
-import com.campuseats.iiitv.exception.MenuItemNotFoundException;
 import com.campuseats.iiitv.model.MenuItem;
 import com.campuseats.iiitv.repository.MenuItemRepository;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,6 @@ public class MenuItemService {
     public MenuItemResponse create(CreateMenuItemRequest request,
                                    String idempotencyKey) {
 
-        // Existing Part A/C idempotency behavior is preserved.
         MenuItemResponse existing = idempotencyStore.get(idempotencyKey);
 
         if (existing != null) {
@@ -53,7 +51,8 @@ public class MenuItemService {
                 request.getDescription(),
                 request.getPrice(),
                 request.getCategory(),
-                true
+                true,
+                1
         );
 
         repository.save(item);
@@ -68,7 +67,7 @@ public class MenuItemService {
         return repository.findById(id)
                 .map(MenuItemResponse::new)
                 .orElseThrow(() ->
-                        new MenuItemNotFoundException(id));
+                        new RuntimeException("Menu item not found"));
     }
 
     public List<MenuItemResponse> findByCategory(String category) {
@@ -84,13 +83,20 @@ public class MenuItemService {
 
     public MenuItemResponse updateAvailability(
             String id,
-            AvailabilityRequest request) {
+            AvailabilityRequest request, String ifMatch) {
 
         MenuItem item = repository.findById(id)
-                .orElseThrow(() ->
-                        new MenuItemNotFoundException(id));
+                .orElseThrow(() -> new RuntimeException("Menu item not found"));
+
+        String currentEtag = "\"" + item.getVersion() + "\"";
+
+        if (ifMatch != null && !currentEtag.equals(ifMatch)) {
+            throw new RuntimeException("Precondition Failed");
+        }
 
         item.setAvailable(request.isAvailable());
+        item.setVersion(item.getVersion() + 1);
+
         repository.save(item);
 
         return new MenuItemResponse(item);

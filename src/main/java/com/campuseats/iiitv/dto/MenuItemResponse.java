@@ -16,6 +16,7 @@ public class MenuItemResponse {
     private double price;
     private String category;
     private boolean available;
+    private long version;
 
     public MenuItemResponse(MenuItem item) {
         this.id = item.getId();
@@ -24,5 +25,6 @@ public class MenuItemResponse {
         this.price = item.getPrice();
         this.category = item.getCategory();
         this.available = item.isAvailable();
+        this.version = item.getVersion();
     }
 }

@@ -25,6 +25,7 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+/campus-eats-84563-firebase-adminsdk-fbsvc-33d309285f.json
 
 ### NetBeans ###
 /nbproject/private/

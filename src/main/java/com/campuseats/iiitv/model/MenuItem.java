@@ -15,4 +15,5 @@ public class MenuItem {
     private double price;
     private String category;
     private boolean available;
+    private long version;
 }
