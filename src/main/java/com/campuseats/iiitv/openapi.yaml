@@ -13,12 +13,16 @@ paths:
   /menu-items:
     post:
       summary: Create a menu item
+      security:
+        - bearerAuth: []
       parameters:
         - name: Idempotency-Key
           in: header
           required: true
           schema:
             type: string
+        - $ref: '#/components/parameters/AcceptHeader'
+        - $ref: '#/components/parameters/AuthorizationHeader'
       requestBody:
         required: true
         content:
@@ -30,20 +34,39 @@ paths:
           description: Menu item created
           headers:
             Location:
+              description: URI of the newly created menu item
               schema:
                 type: string
-        '400':
-          description: Bad request
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/XRateLimitLimit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/XRateLimitRemaining'
+            X-Content-Type-Options:
+              $ref: '#/components/headers/XContentTypeOptions'
+            Strict-Transport-Security:
+              $ref: '#/components/headers/StrictTransportSecurity'
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AccessControlAllowOrigin'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Problem'
+                $ref: '#/components/schemas/MenuItemResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
         '409':
           description: Conflict
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
 
     get:
       summary: List menu items
@@ -53,9 +76,21 @@ paths:
           required: false
           schema:
             type: string
+        - $ref: '#/components/parameters/AcceptHeader'
       responses:
         '200':
           description: Menu items returned
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/XRateLimitLimit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/XRateLimitRemaining'
+            X-Content-Type-Options:
+              $ref: '#/components/headers/XContentTypeOptions'
+            Strict-Transport-Security:
+              $ref: '#/components/headers/StrictTransportSecurity'
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AccessControlAllowOrigin'
           content:
             application/json:
               schema:
@@ -63,11 +98,31 @@ paths:
                 items:
                   $ref: '#/components/schemas/MenuItemResponse'
         '400':
-          description: Bad request
-          content:
-            application/json:
+          $ref: '#/components/responses/BadRequest'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+    options:
+      summary: CORS preflight for menu items
+      responses:
+        '204':
+          description: CORS preflight accepted
+          headers:
+            Allow:
               schema:
-                $ref: '#/components/schemas/Problem'
+                type: string
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AccessControlAllowOrigin'
+            Access-Control-Allow-Methods:
+              $ref: '#/components/headers/AccessControlAllowMethods'
+            Access-Control-Allow-Headers:
+              $ref: '#/components/headers/AccessControlAllowHeaders'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/XRateLimitLimit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/XRateLimitRemaining'
 
   /menu-items/{id}:
     get:
@@ -78,29 +133,53 @@ paths:
           required: true
           schema:
             type: string
+        - $ref: '#/components/parameters/AcceptHeader'
       responses:
         '200':
           description: Menu item found
+          headers:
+            Cache-Control:
+              description: Cache policy for the single-item representation
+              schema:
+                type: string
+            ETag:
+              description: Current representation tag
+              schema:
+                type: string
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/XRateLimitLimit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/XRateLimitRemaining'
+            X-Content-Type-Options:
+              $ref: '#/components/headers/XContentTypeOptions'
+            Strict-Transport-Security:
+              $ref: '#/components/headers/StrictTransportSecurity'
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AccessControlAllowOrigin'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/MenuItemResponse'
         '404':
-          description: Menu item not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Problem'
+          $ref: '#/components/responses/NotFound'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
 
   /menu-items/{id}/availability:
     patch:
       summary: Change menu item availability
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
+        - $ref: '#/components/parameters/AcceptHeader'
+        - $ref: '#/components/parameters/AuthorizationHeader'
       requestBody:
         required: true
         content:
@@ -110,24 +189,190 @@ paths:
       responses:
         '200':
           description: Availability updated
+          headers:
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/XRateLimitLimit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/XRateLimitRemaining'
+            X-Content-Type-Options:
+              $ref: '#/components/headers/XContentTypeOptions'
+            Strict-Transport-Security:
+              $ref: '#/components/headers/StrictTransportSecurity'
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AccessControlAllowOrigin'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/MenuItemResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         '404':
-          description: Menu item not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Problem'
+          $ref: '#/components/responses/NotFound'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
         '409':
           description: Conflict
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
 
 components:
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: token
+
+  parameters:
+    AcceptHeader:
+      name: Accept
+      in: header
+      required: false
+      description: Response media type requested by the client. The service returns JSON.
+      schema:
+        type: string
+        default: application/json
+
+    AuthorizationHeader:
+      name: Authorization
+      in: header
+      required: true
+      description: Header-only bearer authentication for protected write operations.
+      schema:
+        type: string
+        example: Bearer demo-token
+
+  headers:
+    XRateLimitLimit:
+      description: Maximum number of requests allowed for the client in the current window.
+      schema:
+        type: integer
+
+    XRateLimitRemaining:
+      description: Requests remaining for the client in the current window.
+      schema:
+        type: integer
+
+    XContentTypeOptions:
+      description: Prevents MIME sniffing.
+      schema:
+        type: string
+        example: nosniff
+
+    StrictTransportSecurity:
+      description: HSTS policy used in HTTPS production deployments.
+      schema:
+        type: string
+        example: max-age=31536000; includeSubDomains
+
+    AccessControlAllowOrigin:
+      description: Allowed CORS origin.
+      schema:
+        type: string
+        example: '*'
+
+    AccessControlAllowMethods:
+      description: Methods accepted for CORS requests.
+      schema:
+        type: string
+        example: GET, POST, PATCH, OPTIONS
+
+    AccessControlAllowHeaders:
+      description: Request headers accepted during CORS preflight.
+      schema:
+        type: string
+        example: Authorization, Content-Type, Accept, Idempotency-Key, X-HTTP-Method-Override
+
+  responses:
+    BadRequest:
+      description: Bad request
+      headers:
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/XRateLimitLimit'
+        X-RateLimit-Remaining:
+          $ref: '#/components/headers/XRateLimitRemaining'
+        X-Content-Type-Options:
+          $ref: '#/components/headers/XContentTypeOptions'
+        Strict-Transport-Security:
+          $ref: '#/components/headers/StrictTransportSecurity'
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AccessControlAllowOrigin'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    NotFound:
+      description: Menu item not found
+      headers:
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/XRateLimitLimit'
+        X-RateLimit-Remaining:
+          $ref: '#/components/headers/XRateLimitRemaining'
+        X-Content-Type-Options:
+          $ref: '#/components/headers/XContentTypeOptions'
+        Strict-Transport-Security:
+          $ref: '#/components/headers/StrictTransportSecurity'
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AccessControlAllowOrigin'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    Unauthorized:
+      description: Authorization header missing or empty
+      headers:
+        WWW-Authenticate:
+          description: Bearer authentication challenge.
+          schema:
+            type: string
+            example: Bearer
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/XRateLimitLimit'
+        X-RateLimit-Remaining:
+          $ref: '#/components/headers/XRateLimitRemaining'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    NotAcceptable:
+      description: Requested response media type is not supported
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    UnsupportedMediaType:
+      description: Request body must use application/json
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    TooManyRequests:
+      description: Per-client rate limit exceeded
+      headers:
+        Retry-After:
+          description: Seconds to wait before retrying.
+          schema:
+            type: integer
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/XRateLimitLimit'
+        X-RateLimit-Remaining:
+          $ref: '#/components/headers/XRateLimitRemaining'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
   schemas:
 
     CreateMenuItemRequest:

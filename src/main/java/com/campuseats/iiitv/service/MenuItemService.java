@@ -3,6 +3,7 @@ package com.campuseats.iiitv.service;
 import com.campuseats.iiitv.dto.AvailabilityRequest;
 import com.campuseats.iiitv.dto.CreateMenuItemRequest;
 import com.campuseats.iiitv.dto.MenuItemResponse;
+import com.campuseats.iiitv.exception.MenuItemNotFoundException;
 import com.campuseats.iiitv.model.MenuItem;
 import com.campuseats.iiitv.repository.MenuItemRepository;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class MenuItemService {
     public MenuItemResponse create(CreateMenuItemRequest request,
                                    String idempotencyKey) {
 
+        // Existing Part A/C idempotency behavior is preserved.
         MenuItemResponse existing = idempotencyStore.get(idempotencyKey);
 
         if (existing != null) {
@@ -66,7 +68,7 @@ public class MenuItemService {
         return repository.findById(id)
                 .map(MenuItemResponse::new)
                 .orElseThrow(() ->
-                        new RuntimeException("Menu item not found"));
+                        new MenuItemNotFoundException(id));
     }
 
     public List<MenuItemResponse> findByCategory(String category) {
@@ -86,7 +88,7 @@ public class MenuItemService {
 
         MenuItem item = repository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Menu item not found"));
+                        new MenuItemNotFoundException(id));
 
         item.setAvailable(request.isAvailable());
         repository.save(item);
