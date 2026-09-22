@@ -1,0 +1,154 @@
+1. Create Menu Item
+
+Command:
+
+curl.exe -v "http://localhost:8080/menu-items" -H "Content-Type: application/json" -H "Idempotency-Key: d1-create-001" --data-binary "@d1-body.json"
+
+> POST /menu-items HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/8.21.0
+> Accept: */*
+> Content-Type: application/json
+> Idempotency-Key: d1-create-001
+> Content-Length: 84
+
+< HTTP/1.1 201
+< Location: /menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a
+< Content-Type: application/json
+< Transfer-Encoding: chunked
+
+{"available":true,"category":"Test","description":"D1 curl test","id":"2bbdf2d6-f9b1-4115-9868-cc97fc409e2a","name":"D1 Test Burger","price":160.0,"version":1}
+
+
+ 
+2. Idempotent Repeat
+ 
+
+Command:
+
+curl.exe -v "http://localhost:8080/menu-items" -H "Content-Type: application/json" -H "Idempotency-Key: d1-create-001" --data-binary "@d1-body.json"
+
+> POST /menu-items HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/8.21.0
+> Accept: */*
+> Content-Type: application/json
+> Idempotency-Key: d1-create-001
+> Content-Length: 84
+
+< HTTP/1.1 201
+< Location: /menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a
+< Content-Type: application/json
+
+{"available":true,"category":"Test","description":"D1 curl test","id":"2bbdf2d6-f9b1-4115-9868-cc97fc409e2a","name":"D1 Test Burger","price":160.0,"version":1}
+
+
+ 
+3. Get Menu Item
+ 
+
+Command:
+
+curl.exe -v "http://localhost:8080/menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a"
+
+> GET /menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/8.21.0
+> Accept: */*
+
+< HTTP/1.1 200
+< ETag: "1"
+< Content-Type: application/json
+< Transfer-Encoding: chunked
+
+{"available":true,"category":"Test","description":"D1 curl test","id":"2bbdf2d6-f9b1-4115-9868-cc97fc409e2a","name":"D1 Test Burger","price":160.0,"version":1}
+
+
+ 
+4. Conditional GET
+ 
+
+Command:
+
+curl.exe -v "http://localhost:8080/menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a" -H "If-None-Match: \"1\""
+
+> GET /menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/8.21.0
+> Accept: */*
+> If-None-Match: "1"
+
+< HTTP/1.1 304
+< ETag: "1"
+
+
+ 
+5. Conditional Write
+ 
+
+Command:
+
+curl.exe -v "http://localhost:8080/menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a/availability" -H "Content-Type: application/json" -H "If-Match: \"0\"" --data-binary "@availability-body.json"
+
+> POST /menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a/availability HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/8.21.0
+> Accept: */*
+> Content-Type: application/json
+> If-Match: "0"
+
+< HTTP/1.1 412
+< Content-Type: application/json
+
+
+ 
+6. Malformed JSON
+ 
+
+Command:
+
+curl.exe -v "http://localhost:8080/menu-items" -H "Content-Type: application/json" -H "Idempotency-Key: d1-bad-001" --data-binary "@bad-body.json"
+
+> POST /menu-items HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/8.21.0
+> Accept: */*
+> Content-Type: application/json
+> Idempotency-Key: d1-bad-001
+
+< HTTP/1.1 400
+< Content-Type: application/json
+
+
+ 
+7. Missing Resource
+ 
+
+Command:
+
+curl.exe -v "http://localhost:8080/menu-items/00000000-0000-0000-0000-000000000000"
+
+> GET /menu-items/00000000-0000-0000-0000-000000000000 HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/8.21.0
+> Accept: */*
+
+< HTTP/1.1 404
+< Content-Type: application/json
+
+
+ 
+8. Unauthorized Request
+ 
+
+Command:
+
+curl.exe -v "http://localhost:8080/menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a"
+
+> GET /menu-items/2bbdf2d6-f9b1-4115-9868-cc97fc409e2a HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/8.21.0
+> Accept: */*
+
+< HTTP/1.1 401
+< Content-Type: application/json
